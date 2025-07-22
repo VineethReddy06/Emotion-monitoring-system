@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simulated Behavioral Emotion</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #111;
+      color: #eee;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: #1e1e1e;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0,255,100,0.1);
+    }
+
+    h1 {
+      color: #76ff03;
+      text-align: center;
+    }
+
+    form {
+      margin-top: 30px;
+    }
+
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 8px;
+      background: #2a2a2a;
+      color: #fff;
+      border: none;
+    }
+
+    button {
+      margin-top: 25px;
+      padding: 12px 25px;
+      background: #00e676;
+      color: #111;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1em;
+      cursor: pointer;
+    }
+
+    .emoji {
+      font-size: 2em;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .result {
+      text-align: center;
+      font-size: 1.4em;
+      margin-top: 20px;
+      color: #00e676;
+    }
+
+    .info-box {
+      background: #2a2a2a;
+      padding: 20px;
+      margin-top: 30px;
+      border-left: 4px solid #76ff03;
+      border-radius: 10px;
+    }
+
+    .back-link {
+      display: block;
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .back-link a {
+      color: #00e676;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Simulated Behavioral Emotion</h1>
+
+    <form action="/behavioral" method="post">
+      <label for="app_usage">App Usage Level:</label>
+      <select name="app_usage" required>
+        <option value="">Select</option>
+        <option value="Low">Low</option>
+        <option value="Medium">Medium</option>
+        <option value="High">High</option>
+      </select>
+
+      <label for="activity_level">Activity Level:</label>
+      <select name="activity_level" required>
+        <option value="">Select</option>
+        <option value="Idle">Idle</option>
+        <option value="Normal">Normal</option>
+        <option value="Active">Active</option>
+      </select>
+
+      <label for="posting_freq">Posting Frequency:</label>
+      <select name="posting_freq" required>
+        <option value="">Select</option>
+        <option value="Rare">Rare</option>
+        <option value="Moderate">Moderate</option>
+        <option value="Frequent">Frequent</option>
+      </select>
+
+      <button type="submit">Predict Emotion</button>
+    </form>
+
+    {% if behavioral_result %}
+      <div class="emoji">{{ behavioral_emoji }}</div>
+      <div class="result">Prediction: {{ behavioral_result }}</div>
+    {% endif %}
+
+    <div class="info-box">
+      <h3>🧠 What Do the Inputs Mean?</h3>
+      <ul>
+        <li><strong>App Usage:</strong><br>
+          • Low = Less than 2 hours/day<br>
+          • Medium = 2–5 hours/day<br>
+          • High = More than 5 hours/day
+        </li><br>
+        <li><strong>Activity Level:</strong><br>
+          • Idle = Passive browsing / minimal interaction<br>
+          • Normal = Balanced engagement<br>
+          • Active = Fast interactions, games, messages
+        </li><br>
+        <li><strong>Posting Frequency:</strong><br>
+          • Rare = Less than 1 post/day<br>
+          • Moderate = 1–3 posts/day<br>
+          • Frequent = 3+ posts/day
+        </li>
+      </ul>
+    </div>
+
+    <div class="info-box">
+      <h3>🔍 How the Model Predicts Emotion</h3>
+      <p>
+        This behavioral model was trained using labeled emotion data (from <code>emotion_data.csv</code>)
+        by assigning logical patterns for each emotion:
+        </p>
+        <ul>
+          <li><strong>Happy 😊</strong>: Active usage, frequent posts, balanced behavior</li>
+          <li><strong>Sad 😢</strong>: Idle state, low usage, rarely posts</li>
+          <li><strong>Angry 😠</strong>: Intense usage, frequent activity and posting</li>
+        </ul>
+      <p>
+        Based on your choices, the system maps your behavior and predicts the most likely emotion.
+      </p>
+    </div>
+
+    <div class="back-link">
+      <a href="{{ url_for('dashboard_redirect') }}">← Back to Dashboard</a>
+    </div>
+  </div>
+</body>
+</html>

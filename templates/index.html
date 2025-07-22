@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Emotion Monitoring Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(-45deg, #0d0d0d, #1c1c1c, #141414, #121212);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      color: #f0f0f0;
+      overflow-x: hidden;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    header {
+      text-align: center;
+      padding: 80px 20px 40px;
+      position: relative;
+    }
+
+    header h1 {
+      font-size: 3em;
+      color: #00e676;
+      text-shadow: 0 0 20px rgba(0, 230, 118, 0.6);
+    }
+
+    header p {
+      font-size: 1.2em;
+      color: #ccc;
+      margin-top: 10px;
+    }
+
+    .profile {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 10px 20px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      font-weight: 500;
+      color: #00e676;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+
+    .profile:hover {
+      background: rgba(0, 230, 118, 0.2);
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .column {
+      flex: 1 1 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 18px;
+      padding: 30px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 0 20px rgba(0, 255, 100, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .glass-card:hover {
+      transform: scale(1.01);
+      box-shadow: 0 0 25px rgba(0, 255, 100, 0.15);
+    }
+
+    textarea, input[type="file"], select {
+      width: 100%;
+      padding: 12px;
+      font-size: 1em;
+      margin-top: 10px;
+      border-radius: 12px;
+      border: none;
+      background: #1e1e1e;
+      color: #eee;
+      box-shadow: inset 2px 2px 5px #0a0a0a, inset -2px -2px 5px #2a2a2a;
+    }
+
+    textarea:focus, input[type="file"]:focus, select:focus {
+      outline: none;
+      box-shadow: 0 0 8px #00e676;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 12px 25px;
+      background: #00e676;
+      color: #111;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
+    }
+
+    button:hover {
+      background: #00c853;
+      box-shadow: 0 6px 20px rgba(0, 230, 118, 0.5);
+      transform: scale(1.05);
+    }
+
+    .emoji {
+      font-size: 3em;
+      animation: pulse 1.5s infinite;
+      text-align: center;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+
+    .result-text {
+      font-size: 1.6em;
+      margin-top: 10px;
+      color: #e0ffe0;
+      text-align: center;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #888;
+      font-size: 0.9em;
+      background-color: #111;
+      box-shadow: 0 -2px 5px rgba(0,0,0,0.3);
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body {% if play_greeting %}onload="playGreeting()" {% endif %}>
+  <header>
+    <h1>Hi {{ username }} 👋</h1>
+    <p>Welcome to your Emotion Monitoring Dashboard</p>
+    <audio id="greetAudio" src="{{ url_for('static', filename='HumeAI_voice-preview_emotion project.wav') }}" hidden></audio>
+    <!-- ✅ Updated Profile Link -->
+    <a href="{{ url_for('profile') }}" class="profile">Profile</a>
+  </header>
+
+  <div class="container">
+    <!-- Left Column -->
+    <div class="column">
+      <!-- Text Sentiment -->
+      <div class="glass-card">
+        <h2>Text Sentiment Analysis</h2>
+        <form action="/predict" method="post">
+          <input type="hidden" name="type" value="text">
+          <textarea name="text_input" rows="4" placeholder="What's on your mind..." required></textarea>
+          <button type="submit">Analyze Text</button>
+        </form>
+      </div>
+
+      <!-- Social Media Image -->
+      <div class="glass-card">
+        <h2>Social Media Image Analysis</h2>
+        <form action="/predict" method="post" enctype="multipart/form-data">
+          <input type="hidden" name="type" value="social">
+          <input type="file" name="social_file" accept="image/*" required>
+          <button type="submit">Analyze Image</button>
+        </form>
+      </div>
+
+      <!-- Prediction Result -->
+      {% if result %}
+      <div class="glass-card">
+        <h2>Prediction Result</h2>
+        <div class="emoji">{{ emoji }}</div>
+        <div class="result-text">{{ result }}</div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Right Column -->
+    <div class="column">
+      <!-- Live Mood Tracker -->
+      <div class="glass-card">
+        <h2>Live Mood Tracker</h2>
+        <canvas id="moodChart" width="300" height="200"></canvas>
+      </div>
+
+      <!-- Screen Time -->
+      <div class="glass-card">
+        <h2>Daily Screen Time Emotion</h2>
+        <p>Upload your screen time and get feedback for a balanced mood!</p>
+        <form action="{{ url_for('screen_time_form') }}" method="get">
+          <button type="submit">Enter</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 Emotion Monitoring System
+  </footer>
+
+  <script>
+    function playGreeting() {
+      document.getElementById('greetAudio').play();
+    }
+
+    const ctxMood = document.getElementById('moodChart').getContext('2d');
+    const moodData = {{ mood_data | tojson | safe }};
+    new Chart(ctxMood, {
+      type: 'line',
+      data: {
+        labels: moodData.map((_, i) => `Entry ${i+1}`),
+        datasets: [{
+          label: 'Mood Score',
+          data: moodData,
+          fill: false,
+          borderColor: '#00e676',
+          backgroundColor: '#00e676',
+          tension: 0.2
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            min: -1,
+            max: 1,
+            ticks: {
+              color: '#fff'
+            }
+          },
+          x: {
+            ticks: {
+              color: '#fff'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: '#fff'
+            }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

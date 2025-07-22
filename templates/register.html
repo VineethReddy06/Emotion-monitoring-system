@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Register | Emotion Monitoring System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0d0d0d, #1c1c1c);
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .register-box {
+      background: #111;
+      padding: 40px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 0 20px rgba(0, 230, 118, 0.2);
+    }
+    .register-box h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #00e676;
+    }
+    .flash {
+      background: #00e676;
+      color: #111;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .register-box input {
+      width: 100%;
+      padding: 12px 15px;
+      margin: 10px 0;
+      background: #222;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1em;
+    }
+    .register-box button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      background: #00e676;
+      border: none;
+      color: #111;
+      font-size: 1.1em;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .register-box button:hover {
+      background: #00c853;
+    }
+    .register-box p {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 0.9em;
+    }
+    .register-box a {
+      color: #00e676;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="register-box">
+    <h2>Create Account</h2>
+
+    <!-- Flash message -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="flash">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="/register">
+      <input type="text" name="full_name" placeholder="Full Name" required />
+      <input type="email" name="email" placeholder="Email Address" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <button type="submit">Register</button>
+    </form>
+    <p>Already have an account? <a href="/login">Sign In</a></p>
+  </div>
+</body>
+</html>
